@@ -1,3 +1,7 @@
+// Testing simple streams
+// This program will create a stream of random numbers,
+//  then create a running average.
+// It should be pretty efficient!
 package main
 
 import(
@@ -18,18 +22,20 @@ func streamtest(args ...string) {
 
 	go makestreamandfill(int32(ms))
 	var cnt uint64 = 0
-	var avg uint64 = 0
+	var avg float64 = 0
 	var sum uint64 = 0
 	var recnum uint8 = 0
-	fmt.Println(recnum)
 
 	for {
 		select {
-		case recnum := <-intchan:
+		case recnum = <-intchan:
+
+			// Converting the recnum to a u64 int is probably lighter
+			//  than generating random u64 numbers. But IDK!
 			sum += uint64(recnum)
 			cnt++
-			avg = (sum/cnt)
-			fmt.Printf("\tAVG: %d\n", avg)
+			avg = float64(sum)/float64(cnt)
+			fmt.Printf("\tAVG: %3.3f\t%3.14f%% to max uint64\n", avg, float64(sum)/float64(^uint64(0)))
 		}
 	}
 
@@ -41,7 +47,7 @@ func makestreamandfill(ms int32) {
 	for {
 		randnum = uint8(rand.Intn(255))
 		time.Sleep(time.Duration(ms) * time.Millisecond)
-		fmt.Printf("%d --> stream", randnum)
+		fmt.Printf("%3d -> stream", randnum)
 		intchan <- randnum;
 	}
 
