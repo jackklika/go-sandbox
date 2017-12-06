@@ -4,11 +4,11 @@
 // It should be pretty efficient!
 package main
 
-import(
+import (
 	"fmt"
-	"time"
-	"strconv"
 	"math/rand"
+	"strconv"
+	"time"
 )
 
 var intchan = make(chan uint8)
@@ -34,7 +34,7 @@ func streamtest(args ...string) {
 			//  than generating random u64 numbers. But IDK!
 			sum += uint64(recnum)
 			cnt++
-			avg = float64(sum)/float64(cnt)
+			avg = float64(sum) / float64(cnt)
 			fmt.Printf("\tAVG: %3.3f\t%3.14f%% to max uint64\n", avg, float64(sum)/float64(^uint64(0)))
 		}
 	}
@@ -43,12 +43,13 @@ func streamtest(args ...string) {
 
 func makestreamandfill(ms int32) {
 
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var randnum uint8 //0 - 255
 	for {
-		randnum = uint8(rand.Intn(255))
+		randnum = uint8(r.Intn(255))
 		time.Sleep(time.Duration(ms) * time.Millisecond)
 		fmt.Printf("%3d -> stream", randnum)
-		intchan <- randnum;
+		intchan <- randnum
 	}
 
 }
